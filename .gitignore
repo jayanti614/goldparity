@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.db
+
+# Generated data
+backend/sample_data/*.csv
+
+# Node / frontend (added in a later phase)
+node_modules/
+dist/
+build/
+.env
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
