@@ -1,0 +1,98 @@
+:root {
+  /* ---- Color: grounded in the subject -- gold trading on an Indian
+     commodity exchange. Warm paper + deep ink + antique bullion gold,
+     not the generic cream/terracotta AI-default. ---- */
+  --paper: #f6f3ec;
+  --paper-raised: #fdfcf9;
+  --ink: #131b2e;
+  --ink-soft: #4a5268;
+  --hairline: #e3ddcf;
+  --hairline-strong: #cfc7b0;
+
+  --gold: #a9791e;
+  --gold-bright: #d4a537;
+  --gold-wash: #f2e8d2;
+
+  --gain: #3f6b4a;
+  --gain-wash: #e7efe8;
+  --loss: #a33636;
+  --loss-wash: #f5e6e3;
+
+  --live-dot: #3f6b4a;
+
+  /* ---- Type ---- */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", monospace;
+
+  /* ---- Spacing scale ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --content-max: 1180px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
