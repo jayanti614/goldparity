@@ -1,4 +1,11 @@
-const BASE = "/api";
+// Locally, this stays "/api" and Vite's dev-server proxy (vite.config.js)
+// forwards it to the backend -- no env var needed for local dev.
+//
+// Once deployed, there's no dev-server proxy anymore (this becomes a
+// static build), so VITE_API_BASE_URL must be set at build time to the
+// real backend URL, e.g. https://goldparity-api.onrender.com/api
+// (set this in Vercel's Environment Variables before deploying).
+const BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 async function get(path) {
   const res = await fetch(`${BASE}${path}`);

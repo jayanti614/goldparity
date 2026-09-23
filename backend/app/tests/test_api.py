@@ -5,8 +5,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from app.db import init_db  # noqa: E402
 from app.main import app  # noqa: E402
 
+# TestClient only runs FastAPI's startup event (which calls init_db()) when
+# used as a context manager -- used plainly like this, it never fires. Call
+# it explicitly so table creation doesn't depend on that lifespan quirk.
+init_db()
 client = TestClient(app)
 
 

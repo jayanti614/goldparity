@@ -22,8 +22,8 @@ today vs. what's still in progress.
 | 5 | Implied carry rate + delivery-risk filter | ✅ Built |
 | 6 | FastAPI backend endpoints | ✅ Built |
 | 7 | React dashboard | ✅ Built |
-| 8 | Trust ledger (signal track record) | ⏳ Not started |
-| 9 | Deploy + polish | ⏳ Not started |
+| 8 | Trust ledger (signal track record) | 🗓️ Moved to the Manali (offline) build — needs real accumulated history to be meaningful |
+| 9 | Deploy + polish | 🔧 In progress |
 
 **Parser validated against a real MCX file** (`BhavCopyDateWise`, 18 Sep
 2026, uploaded 20 Sep 2026) — this caught and fixed two wrong assumptions
@@ -219,6 +219,65 @@ python app\tests\test_delivery_risk.py
 python app\tests\test_arbitrage_score.py
 python app\tests\test_api.py
 ```
+
+## Phase 9 — Deploying this for real
+
+Right now this only runs on your own laptop. Deploying puts it on the
+internet with a real link anyone (including judges) can open — no
+Python or Node install required on their end.
+
+**The plan:** the backend (FastAPI) goes on **Render** (free tier), the
+frontend (React) goes on **Vercel** (free tier). Both connect directly to
+your GitHub repo, so every future `git push` can redeploy automatically.
+
+### Step 1 — Deploy the backend on Render
+
+1. Go to render.com and sign up/log in (using your GitHub account is easiest).
+2. Click **New +** → **Web Service**.
+3. Connect your GitHub account if asked, then select your `GoldParity` repo.
+4. Fill in these settings:
+   - **Root Directory:** `backend`
+   - **Runtime:** Python 3
+   - **Build Command:**
+     ```
+     pip install -r requirements.txt && python scripts/generate_sample_data.py && python scripts/run_pipeline.py && python scripts/run_analytics.py && python scripts/run_backtest.py
+     ```
+   - **Start Command:**
+     ```
+     uvicorn app.main:app --host 0.0.0.0 --port $PORT
+     ```
+   - **Instance Type:** Free
+5. Click **Create Web Service**. It'll take a few minutes the first time.
+6. Once it's live, copy the URL Render gives you (something like
+   `https://goldparity-api.onrender.com`). Check `https://<that-url>/docs`
+   loads.
+
+*Note: the free tier sleeps after 15 minutes of no traffic. The first
+visit after that will take ~30-60 seconds to wake up — normal, not a bug.*
+
+### Step 2 — Deploy the frontend on Vercel
+
+1. Go to vercel.com and sign up/log in with GitHub.
+2. Click **Add New** → **Project**, and import your `GoldParity` repo.
+3. Set **Root Directory** to `frontend`. Vercel should auto-detect Vite.
+4. Before deploying, add an environment variable:
+   - **Name:** `VITE_API_BASE_URL`
+   - **Value:** your Render URL + `/api`, e.g. `https://goldparity-api.onrender.com/api`
+5. Click **Deploy**.
+6. Once done, Vercel gives you a URL like `https://goldparity.vercel.app` —
+   open it and confirm the dashboard loads real data.
+
+### Step 3 — Let the backend trust the frontend's real domain
+
+1. Back in Render, open your service → **Environment**.
+2. Add an environment variable:
+   - **Name:** `ALLOWED_ORIGINS`
+   - **Value:** your Vercel URL, e.g. `https://goldparity.vercel.app`
+3. Save — Render will redeploy automatically.
+4. Reload your Vercel URL and confirm the dashboard still loads data (this
+   step is what makes the browser's CORS check pass in production).
+
+From here on, any `git push` to your repo auto-redeploys both sides.
 
 ## Using a real MCX file
 

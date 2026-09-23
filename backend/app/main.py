@@ -1,13 +1,19 @@
 """
 GoldParity API — Phase 6.
 
-Run with:
+Run locally with:
     uvicorn app.main:app --reload
 
 Then open http://127.0.0.1:8000/docs for interactive API docs.
+
+For deployment (Phase 9), set the ALLOWED_ORIGINS environment variable to
+a comma-separated list of the frontend's real domain(s), e.g.:
+    ALLOWED_ORIGINS=https://goldparity.vercel.app
 """
 
 from __future__ import annotations
+
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,12 +27,16 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Vite's default dev server ports. The frontend also proxies /api through
-# its own dev server (see frontend/vite.config.js), so CORS is a fallback
-# safety net rather than the primary mechanism.
+# Local dev origins (Vite's default ports) are always allowed. Anything in
+# the ALLOWED_ORIGINS env var (comma-separated) is added on top of that --
+# this is how the deployed frontend's real domain gets permission to call
+# this API without needing a code change per deployment.
+_default_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+_extra_origins = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_default_origins + _extra_origins,
     allow_methods=["GET"],
     allow_headers=["*"],
 )

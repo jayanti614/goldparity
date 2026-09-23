@@ -1,0 +1,22 @@
+# Optional: Render "Blueprint" for one-click backend deployment.
+# If you connect this repo on Render and it detects this file, it can set
+# up the service automatically. If you'd rather configure it by hand
+# instead (recommended the first time, so you can see what each setting
+# does), follow the manual steps in README.md instead and ignore this file.
+
+services:
+  - type: web
+    name: goldparity-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python scripts/generate_sample_data.py &&
+      python scripts/run_pipeline.py &&
+      python scripts/run_analytics.py &&
+      python scripts/run_backtest.py
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: ""  # fill in with your Vercel frontend URL after deploying it
